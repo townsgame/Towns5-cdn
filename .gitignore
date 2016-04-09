@@ -1,0 +1,15 @@
+*desktop.ini
+
+/nbproject
+/.idea
+
+
+ *(copy)*
+*.old.*
+
+
+/node_modules/
+
+
+/cache/*
+/storage/*

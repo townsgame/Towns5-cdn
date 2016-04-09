@@ -49,13 +49,23 @@ foreach($_FILES as $key=>$file){
         //-----------------------------------------------------------------Success
 
 
-        $url='http://localhost/towns/towns-cdn/'.uniqid().'-'.base64_encode($file['name']);
-
-
-
+        $extension= pathinfo($file['name'], PATHINFO_EXTENSION);
         $image_info = getimagesize($file['tmp_name']);
-        $url.='?width='.$image_info[0];
 
+
+        $filename=uniqid().'-'.base64_encode($file['name']).'.'.$extension;
+
+
+        $url='http://localhost/towns/towns-cdn/'.$filename.'?width='.$image_info[0];
+        $path=__DIR__.'/storage/'.$filename;
+
+
+
+        //-----------------------------Moving files
+
+        move_uploaded_file($file['tmp_name'],$path);
+
+        //-----------------------------Setting response URL
 
         $response[$key]=$url;
 

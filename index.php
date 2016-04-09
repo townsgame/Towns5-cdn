@@ -12,19 +12,25 @@ require_once(__DIR__.'/lib/graphic.lib.php');
 require_once(__DIR__.'/lib/init.php');
 
 
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: *");
 
 //----------------------------------------------------------------------------------------------------------------------
 
 
-$mathod = strtoupper($_SERVER['REQUEST_METHOD']);
+$method = strtoupper($_SERVER['REQUEST_METHOD']);
 
 
+if($method == 'OPTIONS'){
 
-if($mathod=='GET'){
+    header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+
+
+}elseif($method=='GET'){
 
     require(__DIR__.'/download.php');
 
-}elseif($mathod=='POST') {
+}elseif($method=='POST') {
 
     require(__DIR__.'/upload.php');
 

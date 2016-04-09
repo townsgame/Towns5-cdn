@@ -3,15 +3,9 @@ Options -Indexes
 Options +FollowSymLinks
 
 
-<Files ".htaccess|README.md">
+
+
+<Files "./storage/*|./cache/*|./lib/*">
     Order Allow,Deny
     Deny from all
 </Files>
-
-
-<IfModule mod_rewrite.c>
-
-    RewriteEngine On
-    RewriteRule . index.php [L,QSA]
-
-</IfModule>

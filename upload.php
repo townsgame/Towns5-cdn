@@ -57,7 +57,7 @@ foreach($_FILES as $key=>$file){
 
 
         $url='http://localhost/towns/towns-cdn/?file='.$filename.'&width='.$image_info[0];
-        $path=__DIR__.'/storage/'.$filename;
+        $path=files\storagePath(__DIR__.'/storage/',$filename,true);
 
 
 

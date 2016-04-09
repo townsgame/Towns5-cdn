@@ -16,8 +16,7 @@ $filename=base64_decode($filename);
 
 
 
-$path=__DIR__.'/storage/'.$_GET['file'];
-
+$path=files\storagePath(__DIR__.'/storage/',$_GET['file']);
 
 
 

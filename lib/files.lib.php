@@ -25,6 +25,30 @@ function createDir($dir){
 
 
 }
+//----------------------------------------------------------------------------------------------------------------------
+
+
+
+function storagePath($dir,$filename,$create_dirs=false){
+
+    $cache='../../cache';
+
+
+    $md5=md5($filename);
+
+    list($a,$b)=str_split($md5,2);
+
+    if($create_dirs){
+        createDir("$dir/$a");
+        createDir("$dir/$a/$b");
+    }
+
+
+    return("$dir/$a/$b/$filename");
+}
+
+
+
 
 //----------------------------------------------------------------------------------------------------------------------
 

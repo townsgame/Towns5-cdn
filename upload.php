@@ -53,7 +53,7 @@ foreach($_FILES as $key=>$file){
         $image_info = getimagesize($file['tmp_name']);
 
 
-        $filename=uniqid().'-'.base64_encode($file['name']).'.'.$extension;
+        $filename=uniqid().'-'.base64_encode($file['name']);
 
 
         $url='http://localhost/towns/towns-cdn/?file='.$filename.'&width='.$image_info[0];

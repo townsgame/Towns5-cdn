@@ -56,7 +56,7 @@ function storagePath($dir,$filename,$create_dirs=false){
 
 function cacheFile($file,$ext=imgext,$cpath='main'){
 
-    $cache='../../cache';
+    $cache='cache';
 
     if($cpath)$cpath='/'.$cpath;
 

@@ -1,0 +1,13 @@
+{
+    "name": "towns5/towns-cdn",
+    "description": "API for image uploading and processing",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Stefan Kecskes",
+            "email": "stefan@towns.cz"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}

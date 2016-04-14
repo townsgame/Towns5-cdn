@@ -1,6 +1,7 @@
 {
     "name": "towns5/towns-cdn",
     "description": "API for image uploading and processing",
+    "keywords": ["cdn", "towns"],
     "license": "MIT",
     "authors": [
         {
@@ -8,6 +9,19 @@
             "email": "stefan@towns.cz"
         }
     ],
-    "minimum-stability": "dev",
-    "require": {}
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "~4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "app\\": "app/"
+        }
+    },
+    "autoload-dev": {
+        "classmap": [
+            "tests/"
+        ]
+    },
+    "minimum-stability": "dev"
 }

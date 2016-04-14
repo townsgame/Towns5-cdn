@@ -1,10 +1,8 @@
-<?php
+<?php namespace app;
 /**
  * @author ©Towns.cz
  * @fileOverview Init file for PHP scripts
  */
-
-namespace towns;
 
 error_reporting(E_ALL ^ E_NOTICE ^ E_DEPRECATED ^ E_WARNING );
 error_reporting(E_ALL);

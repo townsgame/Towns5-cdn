@@ -6,14 +6,13 @@
 //======================================================================================================================
 
 
+require __DIR__ . '/vendor/autoload.php';
 
-require_once(__DIR__.'/lib/files.lib.php');
+//require_once(__DIR__ . '/lib/Files.php');
 require_once(__DIR__.'/lib/graphic.lib.php');
 require_once(__DIR__.'/lib/init.php');
 
 
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: *");
 
 //----------------------------------------------------------------------------------------------------------------------
 

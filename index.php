@@ -5,9 +5,19 @@
  */
 require __DIR__ . '/vendor/autoload.php';
 
-
+/**
+ * Registers new application
+ */
 $app = new \app\Application();
 
+/**
+ * Define routes
+ * get, post, delete, patch, put, options
+ */
+$app->get('/', "app\\Controllers\\HomeController@download");
+$app->post('/', "app\\Controllers\\HomeController@upload");
 
-$controller = new \app\Controllers\HomeController();
-$controller->response();
+/**
+ * Find the proper route and execute controller method
+ */
+$app->run();

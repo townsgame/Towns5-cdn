@@ -22,16 +22,8 @@ class HomeController extends BaseController
         $this->method = strtoupper($_SERVER['REQUEST_METHOD']);
     }
 
-    public function response() {
-        if ($this->method == 'OPTIONS') {
-            header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-        } elseif ($this->method == 'GET') {
-            $this->download();
-        } elseif ($this->method == 'POST') {
-            $this->upload();
-        } else {
-            http_response_code(400);//Bad Request
-        }
+    public function options() {
+        header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
     }
 
     /**
@@ -39,42 +31,43 @@ class HomeController extends BaseController
      */
     public function download() {
         //todo $_GET['width'];
+        if(!isset($_GET['file'])) {
+            list($uid, $filename) = explode('-', $_GET['file']);
 
-        list($uid, $filename) = explode('-', $_GET['file']);
+            $filename = base64_decode($filename);
 
-        $filename = base64_decode($filename);
+            $files = new Files();
+            $graphic = new Graphic();
 
-        $files = new Files();
-        $graphic = new Graphic();
+            $path = $files->storagePath(__DIR__ . '/storage/', $_GET['file']);
 
-        $path = $files->storagePath(__DIR__ . '/storage/', $_GET['file']);
+            if (!file_exists($path)) {
+                //todo
+                echo('wrong file');
 
+            } else {
+                //todo widths array
 
-        if (!file_exists($path)) {
-            //todo
-            echo('wrong file');
+                $width = intval($_GET['width']);
 
-        } else {
-            //todo widths array
+                $cache_path = $files->cacheFile(array($path, $width), 'dat', 'images');
 
-            $width = intval($_GET['width']);
+                if (!file_exists($cache_path) or isset($_GET['notmp']) or filesize($cache_path) < 10/** or 1/**/) {
 
-            $cache_path = $files->cacheFile(array($path, $width), 'dat', 'images');
+                    $src = imagecreatefromstring(file_get_contents($path));
+                    $dest = $graphic->imgresizew($src, $width);
 
-            if (!file_exists($cache_path) or isset($_GET['notmp']) or filesize($cache_path) < 10/** or 1/**/) {
+                    imagesavealpha($dest, true);
+                    imagepng($dest, $cache_path);
+                }
 
-                $src = imagecreatefromstring(file_get_contents($path));
-                $dest = $graphic->imgresizew($src, $width);
-
-                imagesavealpha($dest, true);
-                imagepng($dest, $cache_path);
+                header("Content-Disposition: inline; filename=" . $filename);
+                header("Cache-Control: max-age=" . (3600 * 24 * 100));
+                header('Content-Type: ' . mime_content_type($path));
+                readfile($cache_path);
             }
-
-            header("Content-Disposition: inline; filename=" . $filename);
-            header("Cache-Control: max-age=" . (3600 * 24 * 100));
-            header('Content-Type: ' . mime_content_type($path));
-            readfile($cache_path);
         }
+
     }
 
     /**

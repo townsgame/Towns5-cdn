@@ -12,14 +12,15 @@ class Application
      * @var array
      */
     protected $routes = [];
-    
+
     /**
      * Application constructor.
      */
-    public function __construct() {
+    public function __construct()
+    {
         date_default_timezone_set('Europe/Prague');
         $this->registerErrorHandling();
-        ini_set("register_globals","off");
+        ini_set("register_globals", "off");
         header("Access-Control-Allow-Origin: *");
         header("Access-Control-Allow-Headers: *");
     }
@@ -48,17 +49,20 @@ class Application
      *
      * @param $exception
      */
-    public function exception_handler($exception) {
-        print "Exception Caught: ". $exception->getMessage() ."\n";
-        echo "<pre>" . var_export($exception, true) . "</pre>";
-
+    public function exception_handler($exception)
+    {
+        http_response_code(400);
+        print "Error: " . $exception->getMessage() . "\n";
+        if ($_SERVER["HTTP_HOST"] != "cdn.towns.cz") {
+            echo "<pre>" . var_export($exception, true) . "</pre>";
+        }
     }
 
     /**
      * Register a route with the application.
      *
-     * @param  string  $uri
-     * @param  mixed  $action
+     * @param  string $uri URI path of a route
+     * @param  mixed $action Is concatenated controller and method with '@' symbol in middle
      * @return $this
      */
     public function get($uri, $action)
@@ -71,8 +75,8 @@ class Application
     /**
      * Register a route with the application.
      *
-     * @param  string  $uri
-     * @param  mixed  $action
+     * @param  string $uri
+     * @param  mixed $action
      * @return $this
      */
     public function post($uri, $action)
@@ -85,8 +89,8 @@ class Application
     /**
      * Register a route with the application.
      *
-     * @param  string  $uri
-     * @param  mixed  $action
+     * @param  string $uri
+     * @param  mixed $action
      * @return $this
      */
     public function put($uri, $action)
@@ -99,8 +103,8 @@ class Application
     /**
      * Register a route with the application.
      *
-     * @param  string  $uri
-     * @param  mixed  $action
+     * @param  string $uri
+     * @param  mixed $action
      * @return $this
      */
     public function patch($uri, $action)
@@ -113,8 +117,8 @@ class Application
     /**
      * Register a route with the application.
      *
-     * @param  string  $uri
-     * @param  mixed  $action
+     * @param  string $uri
+     * @param  mixed $action
      * @return $this
      */
     public function delete($uri, $action)
@@ -123,12 +127,12 @@ class Application
 
         return $this;
     }
-    
+
     /**
      * Register a route with the application.
      *
-     * @param  string  $uri
-     * @param  mixed  $action
+     * @param  string $uri
+     * @param  mixed $action
      * @return $this
      */
     public function options($uri, $action)
@@ -141,28 +145,28 @@ class Application
     /**
      * Add a route to the collection.
      *
-     * @param  string  $method
-     * @param  string  $uri
-     * @param  mixed  $action
+     * @param  string $method
+     * @param  string $uri
+     * @param  mixed $action
      */
     protected function addRoute($method, $uri, $action)
     {
         $action = $this->parseAction($action);
-        $uri = $uri === '/' ? $uri : '/'.trim($uri, '/');
-        $this->routes[$method.$uri] = ['method' => $method, 'uri' => $uri, 'action' => $action];
+        $uri = $uri === '/' ? $uri : '/' . trim($uri, '/');
+        $this->routes[$method . $uri] = ['method' => $method, 'uri' => $uri, 'action' => $action];
     }
 
     /**
      * Parse the action into an array format.
      *
-     * @param  mixed  $action
+     * @param  mixed $action
      * @return array
      */
     protected function parseAction($action)
     {
         if (is_string($action)) {
             return ['uses' => $action];
-        } elseif (! is_array($action)) {
+        } elseif (!is_array($action)) {
             return [$action];
         }
 
@@ -171,26 +175,33 @@ class Application
 
     public function run()
     {
-        $method = strtoupper($_SERVER['REQUEST_METHOD']);
-        $requestedUri = $_SERVER["REQUEST_URI"];
-        $routeExecuted = false;
-        foreach($this->routes as $route) {
-            if(is_array($route)
-                && isset($route['method']) && $route['method'] === $method
-                && isset($route['uri']) && $route['uri'] === $requestedUri) {
-                foreach($route['action'] as $action) {
-                    list($controller, $method) = explode("@", $action);
-                    $handler = new $controller();
-                    call_user_func(array($handler, $method));
-                    $routeExecuted = true;
+        try {
+            $method = strtoupper($_SERVER['REQUEST_METHOD']);
+            $requestedUri = $_SERVER["REQUEST_URI"];
+            $routeExecuted = false;
+            foreach ($this->routes as $route) {
+                if (is_array($route)
+                    && isset($route['method']) && $route['method'] === $method
+                    && isset($route['uri']) && $route['uri'] === $requestedUri
+                ) {
+                    foreach ($route['action'] as $action) {
+                        list($controller, $method) = explode("@", $action);
+                        $handler = new $controller();
+                        call_user_func(array($handler, $method));
+                        $routeExecuted = true;
+                    }
                 }
             }
+            if ($routeExecuted) {
+                return true;
+            }
+        } catch (Exception $e) {
+            $this->exception_handler($e);
         }
-        if($routeExecuted) {
-            return true;
-        }
-        //throw new Exception("No route Found");
-        //http_response_code(400);
+
+        $e = new Exception('404 - Page doesn\'t exist', '404');
+        $this->exception_handler($e);
+
     }
 
 }

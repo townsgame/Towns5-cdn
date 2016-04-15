@@ -7,6 +7,7 @@
 
 use app\Files;
 use app\Graphic;
+use Exception;
 
 class HomeController extends BaseController
 {
@@ -22,12 +23,15 @@ class HomeController extends BaseController
         $this->method = strtoupper($_SERVER['REQUEST_METHOD']);
     }
 
+    /**
+     * OPTIONS /
+     */
     public function options() {
         header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
     }
 
     /**
-     * GET mehthod
+     * GET /
      */
     public function download() {
         //todo $_GET['width'];
@@ -65,13 +69,14 @@ class HomeController extends BaseController
                 header("Cache-Control: max-age=" . (3600 * 24 * 100));
                 header('Content-Type: ' . mime_content_type($path));
                 readfile($cache_path);
+
             }
         }
 
     }
 
     /**
-     * POST method
+     * POST /
      */
     public function upload() {
         //todo refactor move to config

@@ -16,6 +16,7 @@ $app = new \app\Application();
  */
 $app->get('/', "app\\Controllers\\HomeController@download");
 $app->post('/', "app\\Controllers\\HomeController@upload");
+$app->options('/', "app\\Controllers\\HomeController@options");
 
 /**
  * Find the proper route and execute controller method

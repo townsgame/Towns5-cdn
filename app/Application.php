@@ -178,6 +178,8 @@ class Application
         try {
             $method = strtoupper($_SERVER['REQUEST_METHOD']);
             $requestedUri = $_SERVER["REQUEST_URI"];
+            list($requestedUri) = explode('?',$requestedUri,2);//todo maybe smarter
+
             $routeExecuted = false;
             foreach ($this->routes as $route) {
                 if (is_array($route)

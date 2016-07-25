@@ -43,7 +43,7 @@ class HomeController extends BaseController
             $files = new Files();
             $graphic = new Graphic();
 
-            $path = $files->storagePath(__DIR__ . '/storage/', $_GET['file']);
+            $path = $files->storagePath(__DIR__ . '/../../storage/', $_GET['file']);
 
             if (!file_exists($path)) {
                 //todo
@@ -133,7 +133,7 @@ class HomeController extends BaseController
 
 
                 $url = 'http://localhost/towns/towns-cdn/?file=' . $filename . '&width=' . $image_info[0];
-                $path = $files->storagePath(__DIR__ . '/storage/', $filename, true);
+                $path = $files->storagePath(__DIR__ . '/../../storage/', $filename, true);
 
 
                 //-----------------------------Moving files

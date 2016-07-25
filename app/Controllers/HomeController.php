@@ -57,7 +57,12 @@ class HomeController extends BaseController
                 if($width>2000)$width=2000;
 
 
-                $user_rotation = intval($_GET['rotation']);
+                if(isset($_GET['rotation'])){
+                    $user_rotation = intval($_GET['rotation']);
+                }else{
+                    $user_rotation = 0;
+                }
+
                 if($user_rotation==0 || $user_rotation==90 || $user_rotation==180 || $user_rotation==270){
                 }else{
                     die('Rotation should be 0,90,180 or 270.');
@@ -94,7 +99,7 @@ class HomeController extends BaseController
 
 
 
-                    $src=imagerotate($src, $user_rotation+$exif_rotation, 0);
+                    $src=imagerotate($src, -$user_rotation+$exif_rotation, 0);
                     //-----------------
 
 

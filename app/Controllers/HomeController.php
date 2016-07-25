@@ -35,7 +35,7 @@ class HomeController extends BaseController
      */
     public function download() {
         //todo $_GET['width'];
-        if(!isset($_GET['file'])) {
+        if(isset($_GET['file'])) {
             list($uid, $filename) = explode('-', $_GET['file']);
 
             $filename = base64_decode($filename);
@@ -53,6 +53,9 @@ class HomeController extends BaseController
                 //todo widths array
 
                 $width = intval($_GET['width']);
+                if($width<10)$width=10;
+                if($width>2000)$width=2000;
+
 
                 $cache_path = $files->cacheFile(array($path, $width), 'dat', 'images');
 
@@ -71,6 +74,8 @@ class HomeController extends BaseController
                 readfile($cache_path);
 
             }
+        }else{
+            echo('unknown file');
         }
 
     }
@@ -132,7 +137,7 @@ class HomeController extends BaseController
                 $filename = uniqid() . '-' . base64_encode($file['name']);
 
 
-                $url = 'http://localhost/towns/towns-cdn/?file=' . $filename . '&width=' . $image_info[0];
+                $url = 'http://'.$_SERVER['HTTP_HOST'].'/?file=' . $filename . '&width=' . $image_info[0];
                 $path = $files->storagePath(__DIR__ . '/../../storage/', $filename, true);
 
 

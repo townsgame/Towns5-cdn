@@ -80,6 +80,7 @@ class HomeController extends BaseController
                     $exif = exif_read_data($path);
                     //print_r($exif);
                     $ort = $exif['Orientation'];
+                    $exif_rotation = 0;
                     switch($ort)
                     {
 

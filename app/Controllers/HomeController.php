@@ -57,11 +57,49 @@ class HomeController extends BaseController
                 if($width>2000)$width=2000;
 
 
-                $cache_path = $files->cacheFile(array($path, $width), 'dat', 'images');
+                $user_rotation = intval($_GET['rotation']);
+                if($user_rotation==0 || $user_rotation==90 || $user_rotation==180 || $user_rotation==270){
+                }else{
+                    die('Rotation should be 0,90,180 or 270.');
+                }
+
+
+                $cache_path = $files->cacheFile(array($path, $width, $user_rotation), 'dat', 'images');
 
                 if (!file_exists($cache_path) or isset($_GET['notmp']) or filesize($cache_path) < 10/** or 1/**/) {
 
                     $src = imagecreatefromstring(file_get_contents($path));
+
+
+                    //-----------------Rotation
+                    $exif = exif_read_data($path);
+                    //print_r($exif);
+                    $ort = $exif['Orientation'];
+                    switch($ort)
+                    {
+
+                        case 3:
+                            $exif_rotation=180;
+                            break;
+
+
+                        case 6:
+                            $exif_rotation=-90;
+                            break;
+
+                        case 8:
+                            $exif_rotation=90;
+                            break;
+                    }
+
+
+
+                    $src=imagerotate($src, $user_rotation+$exif_rotation, 0);
+                    //-----------------
+
+
+
+
                     $dest = $graphic->imgresizew($src, $width);
 
                     imagesavealpha($dest, true);

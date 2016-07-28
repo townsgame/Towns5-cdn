@@ -77,27 +77,31 @@ class HomeController extends BaseController
 
 
                     //-----------------Rotation
-                    $exif = exif_read_data($path);
-                    //print_r($exif);
-                    $ort = $exif['Orientation'];
-                    $exif_rotation = 0;
-                    switch($ort)
-                    {
+                    try {
+                        $exif = exif_read_data($path);
+                        //print_r($exif);
+                        $ort = $exif['Orientation'];
+                        $exif_rotation = 0;
+                        switch($ort)
+                        {
 
-                        case 3:
-                            $exif_rotation=180;
-                            break;
+                            case 3:
+                                $exif_rotation=180;
+                                break;
 
 
-                        case 6:
-                            $exif_rotation=-90;
-                            break;
+                            case 6:
+                                $exif_rotation=-90;
+                                break;
 
-                        case 8:
-                            $exif_rotation=90;
-                            break;
+                            case 8:
+                                $exif_rotation=90;
+                                break;
+                        }
                     }
-
+                    catch (Exception $exp) {
+                        $exif_rotation=0;
+                    }
 
 
                     $src=imagerotate($src, -$user_rotation+$exif_rotation, 0);

@@ -34,6 +34,18 @@ class HomeController extends BaseController
      * GET /
      */
     public function download() {
+
+        define('IMAGE_QUALITY_JPG',60);
+        define('IMAGE_QUALITY_PNG',9);
+
+        if(isset($_GET['format'])){
+            $format = $_GET['format'];
+        }else{
+            $format='jpg';
+        }
+
+
+
         //todo $_GET['width'];
         if(isset($_GET['file'])) {
             list($uid, $filename) = explode('-', $_GET['file']);
@@ -44,6 +56,9 @@ class HomeController extends BaseController
             $graphic = new Graphic();
 
             $path = $files->storagePath(__DIR__ . '/../../storage/', $_GET['file']);
+
+            //echo($path);
+
 
             if (!file_exists($path)) {
                 //todo
@@ -72,6 +87,7 @@ class HomeController extends BaseController
                 $cache_path = $files->cacheFile(array($path, $width, $user_rotation), 'dat', 'images');
 
                 if (!file_exists($cache_path) or isset($_GET['notmp']) or filesize($cache_path) < 10/** or 1/**/) {
+
 
                     $src = imagecreatefromstring(file_get_contents($path));
 
@@ -104,16 +120,30 @@ class HomeController extends BaseController
                     }
 
 
-                    $src=imagerotate($src, -$user_rotation+$exif_rotation, 0);
+                    //-----------------
+                    $dest = $graphic->imgresizew($src, $width);
+                    $rotation = -$user_rotation+$exif_rotation;
+                    if($rotation) {
+                        $dest = imagerotate($dest, $rotation, 0);
+                    }
                     //-----------------
 
 
 
 
-                    $dest = $graphic->imgresizew($src, $width);
+
 
                     imagesavealpha($dest, true);
-                    imagepng($dest, $cache_path);
+
+                    if($format=='png'){
+                        imagepng($dest, $cache_path,IMAGE_QUALITY_PNG);
+
+                    }elseif($format=='jpg'){
+                        imagejpeg($dest, $cache_path,IMAGE_QUALITY_JPG);
+
+                    }else{
+                        throw(new Exception('Unknown file format!'));
+                    }
                 }
 
                 header("Content-Disposition: inline; filename=" . $filename);
@@ -140,7 +170,8 @@ class HomeController extends BaseController
             'image/png'
             //todo maybe bmp?
         );
-        $file_max_size = '7MB';
+        $file_max_size = '25MB';
+        $file_max_megapixels = 20000000;
         $files = new Files();
 
         $file_max_size = $files->toByteSize($file_max_size);
@@ -159,14 +190,25 @@ class HomeController extends BaseController
 
             //print_r($file);
 
+            $info = getimagesize($file['tmp_name']);
+            $megapixels = ($info[0]*$info[1]);
+
+
+
             if ($file['size'] > $file_max_size) {
                 //-----------------------------------------------------------------Size error
 
-                $response[$key] = 'Error: extended max type';
+                $response[$key] = 'Error: extended max size';
+                $response_all_ok = false;
+
+                //  -----------------------------------------------------------------*/
+            } elseif ($megapixels > $file_max_megapixels) {
+                //-----------------------------------------------------------------Size error
+
+                $response[$key] = 'Error: extended max megapixels';
                 $response_all_ok = false;
 
                 //-----------------------------------------------------------------*/
-                /**/
             } elseif (in_array($file['type'], $file_accepted_types) === false) {
                 //-----------------------------------------------------------------Type error
 

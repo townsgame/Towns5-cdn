@@ -1,4 +1,10 @@
 <?php
+
+
+ini_set('memory_limit', '-1');
+
+
+
 /**
  * @author ©Towns.cz
  * @fileOverview Switch file

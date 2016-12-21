@@ -84,7 +84,14 @@ class HomeController extends BaseController
                 }
 
 
-                $cache_path = $files->cacheFile(array($path, $width, $user_rotation), 'dat', 'images');
+                if(isset($_GET['ratio'])){
+                    $ratio = floatval($_GET['ratio']);
+                }else{
+                    $ratio = false;
+                }
+
+
+                $cache_path = $files->cacheFile(array($path, $width, $user_rotation, $ratio), 'dat', 'images');
 
                 if (!file_exists($cache_path) or isset($_GET['notmp']) or filesize($cache_path) < 10/** or 1/**/) {
 
@@ -121,25 +128,38 @@ class HomeController extends BaseController
 
 
                     //-----------------
-                    $dest = $graphic->imgresizew($src, $width);
+
+
+                    if($ratio){
+                        $src_ = $graphic->imgreresizecrop($src,  $width, $ratio);
+                        imagedestroy($src);
+                        $src=$src_;
+                    }else{
+                        $src_ = $graphic->imgresizew($src, $width);
+                        imagedestroy($src);
+                        $src=$src_;
+                    }
+
+
+
                     $rotation = -$user_rotation+$exif_rotation;
                     if($rotation) {
-                        $dest = imagerotate($dest, $rotation, 0);
+                        $src_ = imagerotate($dest, $rotation, 0);
+                        imagedestroy($src);
+                        $src=$src_;
                     }
                     //-----------------
 
 
 
 
-
-
-                    imagesavealpha($dest, true);
+                    imagesavealpha($src, true);
 
                     if($format=='png'){
-                        imagepng($dest, $cache_path,IMAGE_QUALITY_PNG);
+                        imagepng($src, $cache_path,IMAGE_QUALITY_PNG);
 
                     }elseif($format=='jpg'){
-                        imagejpeg($dest, $cache_path,IMAGE_QUALITY_JPG);
+                        imagejpeg($src, $cache_path,IMAGE_QUALITY_JPG);
 
                     }else{
                         throw(new Exception('Unknown file format!'));

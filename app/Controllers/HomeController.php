@@ -144,7 +144,7 @@ class HomeController extends BaseController
 
                     $rotation = -$user_rotation+$exif_rotation;
                     if($rotation) {
-                        $src_ = imagerotate($dest, $rotation, 0);
+                        $src_ = imagerotate($src, $rotation, 0);
                         imagedestroy($src);
                         $src=$src_;
                     }

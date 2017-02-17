@@ -166,7 +166,8 @@ class HomeController extends BaseController
                     }
                 }
 
-                header("Content-Disposition: inline; filename=" . $filename);
+                header("Content-Disposition: inline");
+                //todo should be here filename? header("Content-Disposition: inline; filename=" . urlencode($filename));
                 header("Cache-Control: max-age=" . (3600 * 24 * 100));
                 header('Content-Type: ' . mime_content_type($path));
                 readfile($cache_path);

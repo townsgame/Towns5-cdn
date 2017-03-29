@@ -91,7 +91,7 @@ class HomeController extends BaseController
                 }
 
 
-                $cache_path = $files->cacheFile(array($path, $width, $user_rotation, $ratio), 'dat', 'images');
+                $cache_path = $files->cacheFile(array($path, $width, $user_rotation, $ratio, $format), 'dat', 'images');
 
                 if (!file_exists($cache_path) or isset($_GET['notmp']) or filesize($cache_path) < 10/** or 1/**/) {
 

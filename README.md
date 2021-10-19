@@ -1,3 +1,5 @@
+# `This project is very old and not maintained for a long time. So expect a very pure code quality, outdated dependencies and security issues.`
+
 # Towns CDN
 
 Towns CDN is Content Delivery Network for Towns game.
